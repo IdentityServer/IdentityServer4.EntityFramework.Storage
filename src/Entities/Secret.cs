@@ -15,5 +15,6 @@ namespace IdentityServer4.EntityFramework.Entities
         public string Value { get; set; }
         public DateTime? Expiration { get; set; }
         public string Type { get; set; } = "SharedSecret";
+        public DateTime Created { get; set; } = DateTime.UtcNow;
     }
 }
