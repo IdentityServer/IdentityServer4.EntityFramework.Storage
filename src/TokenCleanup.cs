@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IdentityServer4.EntityFramework
 {
-    internal class TokenCleanup
+    public class TokenCleanup
     {
         private readonly ILogger<TokenCleanup> _logger;
         private readonly IServiceProvider _serviceProvider;
