@@ -17,5 +17,6 @@ namespace IdentityServer4.EntityFramework.Entities
         public List<ApiSecret> Secrets { get; set; }
         public List<ApiScope> Scopes { get; set; }
         public List<ApiResourceClaim> UserClaims { get; set; }
+        public List<ApiResourceProperty> Properties { get; set; }
     }
 }

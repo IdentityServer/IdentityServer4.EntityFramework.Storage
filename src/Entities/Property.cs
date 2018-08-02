@@ -6,8 +6,10 @@
 
 namespace IdentityServer4.EntityFramework.Entities
 {
-    public class ClientProperty : Property
+    public abstract class Property
     {
-        public Client Client { get; set; }
+        public int Id { get; set; }
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 }

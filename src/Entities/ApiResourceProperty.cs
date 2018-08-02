@@ -6,8 +6,8 @@
 
 namespace IdentityServer4.EntityFramework.Entities
 {
-    public class ClientProperty : Property
+    public class ApiResourceProperty : Property
     {
-        public Client Client { get; set; }
+        public ApiResource ApiResource { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using System.Collections.Generic;
 using AutoMapper;
 
 namespace IdentityServer4.EntityFramework.Mappers
@@ -17,6 +18,9 @@ namespace IdentityServer4.EntityFramework.Mappers
         /// </summary>
         public ApiResourceMapperProfile()
         {
+            CreateMap<Entities.ApiResourceProperty, KeyValuePair<string, string>>()
+                .ReverseMap();
+
             CreateMap<Entities.ApiResource, Models.ApiResource>(MemberList.Destination)
                 .ConstructUsing(src => new Models.ApiResource())
                 .ForMember(x => x.ApiSecrets, opts => opts.MapFrom(x => x.Secrets))
