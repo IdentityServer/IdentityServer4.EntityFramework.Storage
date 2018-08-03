@@ -47,7 +47,7 @@ namespace IdentityServer4.EntityFramework
 
             _source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-            Task.Factory.StartNew(() => StartInternal(_source.Token));
+            Task.Factory.StartNew(() => StartInternalAsync(_source.Token));
         }
 
         public void Stop()
@@ -60,7 +60,7 @@ namespace IdentityServer4.EntityFramework
             _source = null;
         }
 
-        private async Task StartInternal(CancellationToken cancellationToken)
+        private async Task StartInternalAsync(CancellationToken cancellationToken)
         {
             while (true)
             {
@@ -91,11 +91,11 @@ namespace IdentityServer4.EntityFramework
                     break;
                 }
 
-                ClearTokens();
+                await ClearTokensAsync();
             }
         }
 
-        public void ClearTokens()
+        public async Task ClearTokensAsync()
         {
             try
             {
@@ -105,6 +105,7 @@ namespace IdentityServer4.EntityFramework
 
                 using (var serviceScope = _serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
                 {
+                    var tokenCleanupNotification = serviceScope.ServiceProvider.GetService<ITokenCleanupNotification>();
                     using (var context = serviceScope.ServiceProvider.GetService<IPersistedGrantDbContext>())
                     {
                         while (found >= _options.TokenCleanupBatchSize)
@@ -124,6 +125,8 @@ namespace IdentityServer4.EntityFramework
                                 try
                                 {
                                     context.SaveChanges();
+
+                                    await tokenCleanupNotification.PersistedGrantsRemovedAsync(expired);
                                 }
                                 catch (DbUpdateConcurrencyException ex)
                                 {
