@@ -126,7 +126,7 @@ namespace IdentityServer4.EntityFramework
                                 {
                                     context.SaveChanges();
 
-                                    await tokenCleanupNotification.PersistedGrantsRemovedAsync(expired);
+                                    await tokenCleanupNotification?.PersistedGrantsRemovedAsync(expired);
                                 }
                                 catch (DbUpdateConcurrencyException ex)
                                 {
