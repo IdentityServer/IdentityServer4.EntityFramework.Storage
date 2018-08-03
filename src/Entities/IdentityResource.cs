@@ -4,6 +4,7 @@
 
 #pragma warning disable 1591
 
+using System;
 using System.Collections.Generic;
 
 namespace IdentityServer4.EntityFramework.Entities
@@ -20,5 +21,7 @@ namespace IdentityServer4.EntityFramework.Entities
         public bool ShowInDiscoveryDocument { get; set; } = true;
         public List<IdentityClaim> UserClaims { get; set; }
         public List<IdentityResourceProperty> Properties { get; set; }
+        public DateTime Created { get; set; } = DateTime.UtcNow;
+        public DateTime? Updated { get; set; }
     }
 }

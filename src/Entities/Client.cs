@@ -5,6 +5,7 @@
 #pragma warning disable 1591
 
 using IdentityServer4.Models;
+using System;
 using System.Collections.Generic;
 
 namespace IdentityServer4.EntityFramework.Entities
@@ -55,5 +56,8 @@ namespace IdentityServer4.EntityFramework.Entities
         public string PairWiseSubjectSalt { get; set; }
         public List<ClientCorsOrigin> AllowedCorsOrigins { get; set; }
         public List<ClientProperty> Properties { get; set; }
+        public DateTime Created { get; set; } = DateTime.UtcNow;
+        public DateTime? Updated { get; set; }
+        public DateTime? LastAccessed { get; set; }
     }
 }
