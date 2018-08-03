@@ -85,7 +85,7 @@ namespace IdentityServer4.EntityFramework.Extensions
             modelBuilder.Entity<ClientSecret>(secret =>
             {
                 secret.ToTable(storeOptions.ClientSecret);
-                secret.Property(x => x.Value).HasMaxLength(2000).IsRequired();
+                secret.Property(x => x.Value).HasMaxLength(4000).IsRequired();
                 secret.Property(x => x.Type).HasMaxLength(250).IsRequired();
                 secret.Property(x => x.Description).HasMaxLength(2000);
             });
@@ -195,7 +195,7 @@ namespace IdentityServer4.EntityFramework.Extensions
                 apiSecret.ToTable(storeOptions.ApiSecret).HasKey(x => x.Id);
 
                 apiSecret.Property(x => x.Description).HasMaxLength(1000);
-                apiSecret.Property(x => x.Value).HasMaxLength(2000).IsRequired();
+                apiSecret.Property(x => x.Value).HasMaxLength(4000).IsRequired();
                 apiSecret.Property(x => x.Type).HasMaxLength(250).IsRequired();
             });
 
