@@ -8,7 +8,7 @@ using IdentityServer4.EntityFramework.Entities;
 
 namespace IdentityServer4.EntityFramework
 {
-    public interface ITokenCleanupNotification
+    public interface IOperationalStoreNotification
     {
         Task PersistedGrantsRemovedAsync(IEnumerable<PersistedGrant> persistedGrants);
     }

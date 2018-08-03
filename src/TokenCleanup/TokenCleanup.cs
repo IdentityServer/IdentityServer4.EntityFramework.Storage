@@ -105,7 +105,7 @@ namespace IdentityServer4.EntityFramework
 
                 using (var serviceScope = _serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
                 {
-                    var tokenCleanupNotification = serviceScope.ServiceProvider.GetService<ITokenCleanupNotification>();
+                    var tokenCleanupNotification = serviceScope.ServiceProvider.GetService<IOperationalStoreNotification>();
                     using (var context = serviceScope.ServiceProvider.GetService<IPersistedGrantDbContext>())
                     {
                         while (found >= _options.TokenCleanupBatchSize)
