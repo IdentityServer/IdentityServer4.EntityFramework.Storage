@@ -54,6 +54,7 @@ namespace IdentityServer4.EntityFramework.Stores
                 .Include(x => x.IdentityProviderRestrictions)
                 .Include(x => x.AllowedCorsOrigins)
                 .Include(x => x.Properties)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.ClientId == clientId);
             var model = client?.ToModel();
 

@@ -53,7 +53,8 @@ namespace IdentityServer4.EntityFramework.Stores
                 .Include(x => x.Scopes)
                     .ThenInclude(s => s.UserClaims)
                 .Include(x => x.UserClaims)
-                .Include(x => x.Properties);
+                .Include(x => x.Properties)
+                .AsNoTracking();
 
             var api = apis.FirstOrDefault();
 
@@ -88,7 +89,8 @@ namespace IdentityServer4.EntityFramework.Stores
                 .Include(x => x.Scopes)
                     .ThenInclude(s => s.UserClaims)
                 .Include(x => x.UserClaims)
-                .Include(x => x.Properties);
+                .Include(x => x.Properties)
+                .AsNoTracking();
 
             var results = apis.ToArray();
             var models = results.Select(x => x.ToModel()).ToArray();
@@ -114,7 +116,8 @@ namespace IdentityServer4.EntityFramework.Stores
 
             var resources = query
                 .Include(x => x.UserClaims)
-                .Include(x => x.Properties);
+                .Include(x => x.Properties)
+                .AsNoTracking();
 
             var results = resources.ToArray();
 
@@ -137,7 +140,8 @@ namespace IdentityServer4.EntityFramework.Stores
                 .Include(x => x.Scopes)
                     .ThenInclude(s => s.UserClaims)
                 .Include(x => x.UserClaims)
-                .Include(x => x.Properties);
+                .Include(x => x.Properties)
+                .AsNoTracking();
 
             var result = new Resources(
                 identity.ToArray().Select(x => x.ToModel()).AsEnumerable(),

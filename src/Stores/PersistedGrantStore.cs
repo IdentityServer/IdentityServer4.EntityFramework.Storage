@@ -75,7 +75,7 @@ namespace IdentityServer4.EntityFramework.Stores
         /// <returns></returns>
         public Task<PersistedGrant> GetAsync(string key)
         {
-            var persistedGrant = _context.PersistedGrants.FirstOrDefault(x => x.Key == key);
+            var persistedGrant = _context.PersistedGrants.AsNoTracking().FirstOrDefault(x => x.Key == key);
             var model = persistedGrant?.ToModel();
 
             _logger.LogDebug("{persistedGrantKey} found in database: {persistedGrantKeyFound}", key, model != null);
@@ -90,7 +90,7 @@ namespace IdentityServer4.EntityFramework.Stores
         /// <returns></returns>
         public Task<IEnumerable<PersistedGrant>> GetAllAsync(string subjectId)
         {
-            var persistedGrants = _context.PersistedGrants.Where(x => x.SubjectId == subjectId).ToList();
+            var persistedGrants = _context.PersistedGrants.Where(x => x.SubjectId == subjectId).AsNoTracking().ToList();
             var model = persistedGrants.Select(x => x.ToModel());
 
             _logger.LogDebug("{persistedGrantCount} persisted grants found for {subjectId}", persistedGrants.Count, subjectId);

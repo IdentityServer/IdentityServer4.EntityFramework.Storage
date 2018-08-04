@@ -10,6 +10,7 @@ using IdentityServer4.EntityFramework.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace IdentityServer4.EntityFramework.Services
 {
@@ -44,7 +45,7 @@ namespace IdentityServer4.EntityFramework.Services
             // doing this here and not in the ctor because: https://github.com/aspnet/CORS/issues/105
             var dbContext = _context.HttpContext.RequestServices.GetRequiredService<IConfigurationDbContext>();
 
-            var origins = dbContext.Clients.SelectMany(x => x.AllowedCorsOrigins.Select(y => y.Origin)).ToList();
+            var origins = dbContext.Clients.SelectMany(x => x.AllowedCorsOrigins.Select(y => y.Origin)).AsNoTracking().ToList();
 
             var distinctOrigins = origins.Where(x => x != null).Distinct();
 
