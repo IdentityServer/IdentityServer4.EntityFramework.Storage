@@ -52,7 +52,8 @@ namespace IdentityServer4.EntityFramework.Stores
                 .Include(x => x.Secrets)
                 .Include(x => x.Scopes)
                     .ThenInclude(s => s.UserClaims)
-                .Include(x => x.UserClaims);
+                .Include(x => x.UserClaims)
+                .Include(x => x.Properties);
 
             var api = apis.FirstOrDefault();
 
@@ -86,7 +87,8 @@ namespace IdentityServer4.EntityFramework.Stores
                 .Include(x => x.Secrets)
                 .Include(x => x.Scopes)
                     .ThenInclude(s => s.UserClaims)
-                .Include(x => x.UserClaims);
+                .Include(x => x.UserClaims)
+                .Include(x => x.Properties);
 
             var results = apis.ToArray();
             var models = results.Select(x => x.ToModel()).ToArray();
@@ -111,7 +113,8 @@ namespace IdentityServer4.EntityFramework.Stores
                 select identityResource;
 
             var resources = query
-                .Include(x => x.UserClaims);
+                .Include(x => x.UserClaims)
+                .Include(x => x.Properties);
 
             var results = resources.ToArray();
 
@@ -133,7 +136,8 @@ namespace IdentityServer4.EntityFramework.Stores
                 .Include(x => x.Secrets)
                 .Include(x => x.Scopes)
                     .ThenInclude(s => s.UserClaims)
-                .Include(x => x.UserClaims);
+                .Include(x => x.UserClaims)
+                .Include(x => x.Properties);
 
             var result = new Resources(
                 identity.ToArray().Select(x => x.ToModel()).AsEnumerable(),
