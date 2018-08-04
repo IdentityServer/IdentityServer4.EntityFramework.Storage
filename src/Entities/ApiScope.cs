@@ -18,6 +18,7 @@ namespace IdentityServer4.EntityFramework.Entities
         public bool ShowInDiscoveryDocument { get; set; } = true;
         public List<ApiScopeClaim> UserClaims { get; set; }
 
+        public int ApiResourceId { get; set; }
         public ApiResource ApiResource { get; set; }
     }
 }
