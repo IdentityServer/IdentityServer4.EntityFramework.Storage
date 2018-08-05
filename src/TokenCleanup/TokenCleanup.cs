@@ -110,11 +110,11 @@ namespace IdentityServer4.EntityFramework
                     {
                         while (found >= _options.TokenCleanupBatchSize)
                         {
-                            var expired = context.PersistedGrants
+                            var expired = await context.PersistedGrants
                                 .Where(x => x.Expiration < DateTime.UtcNow)
                                 .OrderBy(x => x.Key)
                                 .Take(_options.TokenCleanupBatchSize)
-                                .ToArray();
+                                .ToArrayAsync();
 
                             found = expired.Length;
                             _logger.LogInformation("Clearing {tokenCount} tokens", found);
@@ -124,7 +124,7 @@ namespace IdentityServer4.EntityFramework
                                 context.PersistedGrants.RemoveRange(expired);
                                 try
                                 {
-                                    context.SaveChanges();
+                                    await context.SaveChangesAsync();
 
                                     if (tokenCleanupNotification != null)
                                     {
