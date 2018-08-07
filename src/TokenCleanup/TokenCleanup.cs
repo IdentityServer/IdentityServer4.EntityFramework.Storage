@@ -14,6 +14,9 @@ using Microsoft.Extensions.Logging;
 
 namespace IdentityServer4.EntityFramework
 {
+    /// <summary>
+    /// Helper to perodically cleanup expired persisted grants.
+    /// </summary>
     public class TokenCleanup
     {
         private readonly ILogger<TokenCleanup> _logger;
@@ -22,8 +25,14 @@ namespace IdentityServer4.EntityFramework
 
         private CancellationTokenSource _source;
 
-        public TimeSpan CleanupInterval => TimeSpan.FromSeconds(_options.TokenCleanupInterval);
+        private TimeSpan CleanupInterval => TimeSpan.FromSeconds(_options.TokenCleanupInterval);
 
+        /// <summary>
+        /// Constructor for TokenCleanup.
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <param name="logger"></param>
+        /// <param name="options"></param>
         public TokenCleanup(IServiceProvider serviceProvider, ILogger<TokenCleanup> logger, OperationalStoreOptions options)
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
@@ -34,27 +43,36 @@ namespace IdentityServer4.EntityFramework
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
+        /// <summary>
+        /// Starts the token cleanup polling.
+        /// </summary>
         public void Start()
         {
             Start(CancellationToken.None);
         }
 
+        /// <summary>
+        /// Starts the token cleanup polling.
+        /// </summary>
         public void Start(CancellationToken cancellationToken)
         {
             if (_source != null) throw new InvalidOperationException("Already started. Call Stop first.");
 
-            _logger.LogDebug("Starting token cleanup");
+            _logger.LogDebug("Starting grant removal");
 
             _source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
             Task.Factory.StartNew(() => StartInternalAsync(_source.Token));
         }
 
+        /// <summary>
+        /// Stops the token cleanup polling.
+        /// </summary>
         public void Stop()
         {
             if (_source == null) throw new InvalidOperationException("Not started. Call Start first.");
 
-            _logger.LogDebug("Stopping token cleanup");
+            _logger.LogDebug("Stopping grant removal");
 
             _source.Cancel();
             _source = null;
@@ -91,15 +109,19 @@ namespace IdentityServer4.EntityFramework
                     break;
                 }
 
-                await ClearTokensAsync();
+                await RemoveExpiredGrantsAsync();
             }
         }
 
-        public async Task ClearTokensAsync()
+        /// <summary>
+        /// Method to clear expired persisted grants.
+        /// </summary>
+        /// <returns></returns>
+        public async Task RemoveExpiredGrantsAsync()
         {
             try
             {
-                _logger.LogTrace("Querying for tokens to clear");
+                _logger.LogTrace("Querying for expired grants to remove");
 
                 var found = Int32.MaxValue;
 
@@ -117,7 +139,7 @@ namespace IdentityServer4.EntityFramework
                                 .ToArray();
 
                             found = expired.Length;
-                            _logger.LogInformation("Clearing {tokenCount} tokens", found);
+                            _logger.LogInformation("Removing {grantCount} grants", found);
 
                             if (found > 0)
                             {
@@ -135,7 +157,7 @@ namespace IdentityServer4.EntityFramework
                                 {
                                     // we get this if/when someone else already deleted the records
                                     // we want to essentially ignore this, and keep working
-                                    _logger.LogDebug("Concurrency exception clearing tokens: {exception}", ex.Message);
+                                    _logger.LogDebug("Concurrency exception removing expired grants: {exception}", ex.Message);
                                 }
                             }
                         }
@@ -144,7 +166,7 @@ namespace IdentityServer4.EntityFramework
             }
             catch (Exception ex)
             {
-                _logger.LogError("Exception clearing tokens: {exception}", ex.Message);
+                _logger.LogError("Exception removing expired grants: {exception}", ex.Message);
             }
         }
     }
