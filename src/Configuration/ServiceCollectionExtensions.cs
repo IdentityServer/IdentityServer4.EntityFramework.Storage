@@ -82,8 +82,6 @@ namespace IdentityServer4.EntityFramework.Storage
             Action<OperationalStoreOptions> storeOptionsAction = null)
             where TContext : DbContext, IPersistedGrantDbContext
         {
-            services.AddSingleton<TokenCleanup>();
-
             var storeOptions = new OperationalStoreOptions();
             services.AddSingleton(storeOptions);
             storeOptionsAction?.Invoke(storeOptions);
@@ -101,6 +99,7 @@ namespace IdentityServer4.EntityFramework.Storage
             }
 
             services.AddScoped<IPersistedGrantDbContext, TContext>();
+            services.AddSingleton<TokenCleanup>();
 
             return services;
         }
