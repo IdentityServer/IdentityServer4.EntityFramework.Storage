@@ -175,6 +175,14 @@ namespace IdentityServer4.EntityFramework.Extensions
                 claim.Property(x => x.Type).HasMaxLength(200).IsRequired();
             });
 
+            modelBuilder.Entity<IdentityResourceProperty>(property =>
+            {
+                property.ToTable(storeOptions.IdentityResourceProperty);
+                property.Property(x => x.Key).HasMaxLength(250).IsRequired();
+                property.Property(x => x.Value).HasMaxLength(2000).IsRequired();
+            });
+
+
 
             modelBuilder.Entity<ApiResource>(apiResource =>
             {
@@ -227,6 +235,14 @@ namespace IdentityServer4.EntityFramework.Extensions
 
                 apiScopeClaim.Property(x => x.Type).HasMaxLength(200).IsRequired();
             });
+
+            modelBuilder.Entity<ApiResourceProperty>(property =>
+            {
+                property.ToTable(storeOptions.ApiResourceProperty);
+                property.Property(x => x.Key).HasMaxLength(250).IsRequired();
+                property.Property(x => x.Value).HasMaxLength(2000).IsRequired();
+            });
+
         }
     }
 }
