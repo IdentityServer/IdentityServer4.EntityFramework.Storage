@@ -59,5 +59,6 @@ namespace IdentityServer4.EntityFramework.Entities
         public DateTime Created { get; set; } = DateTime.UtcNow;
         public DateTime? Updated { get; set; }
         public DateTime? LastAccessed { get; set; }
+        public bool NonEditable { get; set; }
     }
 }
