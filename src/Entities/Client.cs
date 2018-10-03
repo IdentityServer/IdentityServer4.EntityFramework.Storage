@@ -59,6 +59,7 @@ namespace IdentityServer4.EntityFramework.Entities
         public DateTime Created { get; set; } = DateTime.UtcNow;
         public DateTime? Updated { get; set; }
         public DateTime? LastAccessed { get; set; }
+        public int? UserSsoLifetime { get; set; }
         public string UserCodeType { get; set; }
         public int DeviceCodeLifetime { get; set; } = 300;
         public bool NonEditable { get; set; }
