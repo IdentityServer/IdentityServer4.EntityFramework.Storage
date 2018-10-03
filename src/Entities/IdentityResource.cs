@@ -23,5 +23,6 @@ namespace IdentityServer4.EntityFramework.Entities
         public List<IdentityResourceProperty> Properties { get; set; }
         public DateTime Created { get; set; } = DateTime.UtcNow;
         public DateTime? Updated { get; set; }
+        public bool NonEditable { get; set; }
     }
 }
