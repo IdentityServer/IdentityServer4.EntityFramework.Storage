@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityServer4.Storage" Version="0.1.0-dev0028" />
+    <PackageReference Include="IdentityServer4.Storage" Version="2.3.0-dev0007" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.0" />
     <PackageReference Include="AutoMapper" Version="6.2.2" />
 
