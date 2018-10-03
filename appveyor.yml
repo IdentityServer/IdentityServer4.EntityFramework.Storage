@@ -9,7 +9,6 @@ branches:
   
 build_script:
 - ps: .\build.ps1
-- sh: ./build.sh
 
 test: off
 artifacts:

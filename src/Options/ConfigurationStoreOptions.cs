@@ -157,5 +157,19 @@ namespace IdentityServer4.EntityFramework.Options
         /// The client property.
         /// </value>
         public TableConfiguration ClientProperty { get; set; } = new TableConfiguration("ClientProperties");
+        /// <summary>
+        /// Gets or sets the API resource property table configuration.
+        /// </summary>
+        /// <value>
+        /// The client property.
+        /// </value>
+        public TableConfiguration ApiResourceProperty { get; set; } = new TableConfiguration("ApiProperties");
+        /// <summary>
+        /// Gets or sets the identity resource property table configuration.
+        /// </summary>
+        /// <value>
+        /// The client property.
+        /// </value>
+        public TableConfiguration IdentityResourceProperty { get; set; } = new TableConfiguration("IdentityProperties");
     }
 }
