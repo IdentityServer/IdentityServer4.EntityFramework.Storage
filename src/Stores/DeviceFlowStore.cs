@@ -2,8 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityModel;
 using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Interfaces;
 using IdentityServer4.Models;
@@ -28,6 +30,7 @@ namespace IdentityServer4.EntityFramework.Stores
         /// Initializes a new instance of the <see cref="DeviceFlowStore"/> class.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="serializer">The serializer</param>
         /// <param name="logger">The logger.</param>
         public DeviceFlowStore(
             IPersistedGrantDbContext context, 
@@ -96,13 +99,14 @@ namespace IdentityServer4.EntityFramework.Stores
             var existing = _context.DeviceFlowCodes.SingleOrDefault(x => x.UserCode == userCode);
             if (existing == null)
             {
-                _logger.LogDebug("{userCode} not found in database", userCode);
-                return Task.FromResult(0);
+                _logger.LogError("{userCode} not found in database", userCode);
+                throw new InvalidOperationException("Could not update device code");
             }
 
             var entity = ToEntity(data, existing.DeviceCode, userCode);
             _logger.LogDebug("{userCode} found in database", userCode);
 
+            existing.SubjectId = data.Subject?.FindFirst(JwtClaimTypes.Subject).Value;
             existing.Data = entity.Data;
 
             try
@@ -158,7 +162,7 @@ namespace IdentityServer4.EntityFramework.Stores
                 DeviceCode = deviceCode,
                 UserCode = userCode,
                 ClientId = model.ClientId,
-                // TODO: SubjectId
+                SubjectId = model.Subject?.FindFirst(JwtClaimTypes.Subject).Value,
                 CreationTime = model.CreationTime,
                 Expiration = model.CreationTime.AddSeconds(model.Lifetime),
                 Data = _serializer.Serialize(model)
