@@ -132,6 +132,7 @@ namespace IdentityServer4.EntityFramework
                     {
                         while (found >= _options.TokenCleanupBatchSize)
                         {
+                            // TODO: Device Flow cleanup
                             var expired = context.PersistedGrants
                                 .Where(x => x.Expiration < DateTime.UtcNow)
                                 .OrderBy(x => x.Key)
