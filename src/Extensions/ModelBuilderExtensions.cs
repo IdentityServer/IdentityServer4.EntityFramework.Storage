@@ -162,7 +162,6 @@ namespace IdentityServer4.EntityFramework.Extensions
                 codes.HasKey(x => new {x.UserCode});
 
                 codes.HasIndex(x => x.DeviceCode).IsUnique();
-                codes.HasIndex(x => x.UserCode).IsUnique();
             });
         }
 
