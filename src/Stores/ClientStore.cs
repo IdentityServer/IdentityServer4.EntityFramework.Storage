@@ -3,7 +3,6 @@
 
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4.EntityFramework.Interfaces;
 using IdentityServer4.EntityFramework.Mappers;
