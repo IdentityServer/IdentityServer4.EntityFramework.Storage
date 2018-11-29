@@ -50,9 +50,6 @@ namespace SqlServer.Migrations.PersistedGrantDb
                     b.HasIndex("DeviceCode")
                         .IsUnique();
 
-                    b.HasIndex("UserCode")
-                        .IsUnique();
-
                     b.ToTable("DeviceCodes");
                 });
 

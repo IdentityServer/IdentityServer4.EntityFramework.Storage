@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SqlServer.Migrations.PersistedGrantDb
 {
     [DbContext(typeof(PersistedGrantDbContext))]
-    [Migration("20181021143709_Grants")]
+    [Migration("20181129175506_Grants")]
     partial class Grants
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,9 +50,6 @@ namespace SqlServer.Migrations.PersistedGrantDb
                     b.HasKey("UserCode");
 
                     b.HasIndex("DeviceCode")
-                        .IsUnique();
-
-                    b.HasIndex("UserCode")
                         .IsUnique();
 
                     b.ToTable("DeviceCodes");
