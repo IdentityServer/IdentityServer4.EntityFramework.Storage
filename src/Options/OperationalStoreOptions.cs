@@ -45,6 +45,14 @@ namespace IdentityServer4.EntityFramework.Options
         public TableConfiguration PersistedGrants { get; set; } = new TableConfiguration("PersistedGrants");
 
         /// <summary>
+        /// Gets or sets the device flow codes table configuration.
+        /// </summary>
+        /// <value>
+        /// The device flow codes.
+        /// </value>
+        public TableConfiguration DeviceFlowCodes { get; set; } = new TableConfiguration("DeviceCodes");
+
+        /// <summary>
         /// Gets or sets a value indicating whether stale entries will be automatically cleaned up from the database.
         /// This is implemented by perodically connecting to the database (according to the TokenCleanupInterval) from the hosting application.
         /// Defaults to false.

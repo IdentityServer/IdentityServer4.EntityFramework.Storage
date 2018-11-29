@@ -24,6 +24,14 @@ namespace IdentityServer4.EntityFramework.Interfaces
         DbSet<PersistedGrant> PersistedGrants { get; set; }
 
         /// <summary>
+        /// Gets or sets the device flow codes.
+        /// </summary>
+        /// <value>
+        /// The device flow codes.
+        /// </value>
+        DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
+
+        /// <summary>
         /// Saves the changes.
         /// </summary>
         /// <returns></returns>
