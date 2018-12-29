@@ -32,11 +32,12 @@ namespace IdentityServer4.EntityFramework.Storage
         /// </summary>
         /// <param name="services"></param>
         /// <param name="storeOptionsAction">The store options action.</param>
+        /// <param name="poolSize"></param>
         /// <returns></returns>
         public static IServiceCollection AddConfigurationDbContextPool(this IServiceCollection services,
-            Action<ConfigurationStoreOptions> storeOptionsAction = null)
+            Action<ConfigurationStoreOptions> storeOptionsAction = null, int? poolSize = null)
         {
-            return services.AddConfigurationDbContextPool<ConfigurationDbContext>(storeOptionsAction);
+            return services.AddConfigurationDbContextPool<ConfigurationDbContext>(storeOptionsAction, poolSize);
         }
 
         /// <summary>
@@ -73,23 +74,41 @@ namespace IdentityServer4.EntityFramework.Storage
         /// <typeparam name="TContext">The IConfigurationDbContext to use.</typeparam>
         /// <param name="services"></param>
         /// <param name="storeOptionsAction">The store options action.</param>
+        /// <param name="poolSize"></param>
         /// <returns></returns>
         public static IServiceCollection AddConfigurationDbContextPool<TContext>(this IServiceCollection services,
-            Action<ConfigurationStoreOptions> storeOptionsAction = null)
+            Action<ConfigurationStoreOptions> storeOptionsAction = null, int? poolSize = null)
             where TContext : DbContext, IConfigurationDbContext
         {
             services.AddConfigurationInfrastructure<TContext>(storeOptionsAction, out var storeOptions);
 
             if (storeOptions.ResolveDbContextOptions != null)
             {
-                services.AddDbContextPool<TContext>(storeOptions.ResolveDbContextOptions);
+                if (poolSize is null)
+                {
+                    services.AddDbContextPool<TContext>(storeOptions.ResolveDbContextOptions);
+                }
+                else
+                {
+                    services.AddDbContextPool<TContext>(storeOptions.ResolveDbContextOptions, poolSize.Value);
+                }
             }
             else
             {
-                services.AddDbContextPool<TContext>(dbCtxBuilder =>
+                if (poolSize is null)
                 {
-                    storeOptions.ConfigureDbContext?.Invoke(dbCtxBuilder);
-                });
+                    services.AddDbContextPool<TContext>(dbCtxBuilder =>
+                    {
+                        storeOptions.ConfigureDbContext?.Invoke(dbCtxBuilder);
+                    });
+                }
+                else
+                {
+                    services.AddDbContextPool<TContext>(dbCtxBuilder =>
+                    {
+                        storeOptions.ConfigureDbContext?.Invoke(dbCtxBuilder);
+                    }, poolSize.Value);
+                }
             }
 
             return services;
@@ -187,23 +206,41 @@ namespace IdentityServer4.EntityFramework.Storage
         /// <typeparam name="TContext">The IPersistedGrantDbContext to use.</typeparam>
         /// <param name="services"></param>
         /// <param name="storeOptionsAction">The store options action.</param>
+        /// <param name="poolSize"></param>
         /// <returns></returns>
         public static IServiceCollection AddOperationalDbContextPool<TContext>(this IServiceCollection services,
-            Action<OperationalStoreOptions> storeOptionsAction = null)
+            Action<OperationalStoreOptions> storeOptionsAction = null, int? poolSize = null)
             where TContext : DbContext, IPersistedGrantDbContext
         {
             services.AddOperationalInfrastructure<TContext>(storeOptionsAction, out var storeOptions);
 
             if (storeOptions.ResolveDbContextOptions != null)
             {
-                services.AddDbContextPool<TContext>(storeOptions.ResolveDbContextOptions);
+                if (poolSize is null)
+                {
+                    services.AddDbContextPool<TContext>(storeOptions.ResolveDbContextOptions);
+                }
+                else
+                {
+                    services.AddDbContextPool<TContext>(storeOptions.ResolveDbContextOptions, poolSize.Value);
+                }
             }
             else
             {
-                services.AddDbContextPool<TContext>(dbCtxBuilder =>
+                if (poolSize is null)
                 {
-                    storeOptions.ConfigureDbContext?.Invoke(dbCtxBuilder);
-                });
+                    services.AddDbContextPool<TContext>(dbCtxBuilder =>
+                    {
+                        storeOptions.ConfigureDbContext?.Invoke(dbCtxBuilder);
+                    });
+                }
+                else
+                {
+                    services.AddDbContextPool<TContext>(dbCtxBuilder =>
+                    {
+                        storeOptions.ConfigureDbContext?.Invoke(dbCtxBuilder);
+                    }, poolSize.Value);
+                }
             }
 
             return services;
