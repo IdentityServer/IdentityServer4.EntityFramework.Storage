@@ -1,10 +1,9 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-
+using System;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Interfaces;
-using System;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +28,18 @@ namespace IdentityServer4.EntityFramework.Storage
         }
 
         /// <summary>
+        /// Add Configuration DbContextPool to the DI system.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="storeOptionsAction">The store options action.</param>
+        /// <returns></returns>
+        public static IServiceCollection AddConfigurationDbContextPool(this IServiceCollection services,
+            Action<ConfigurationStoreOptions> storeOptionsAction = null)
+        {
+            return services.AddConfigurationDbContextPool<ConfigurationDbContext>(storeOptionsAction);
+        }
+
+        /// <summary>
         /// Add Configuration DbContext to the DI system.
         /// </summary>
         /// <typeparam name="TContext">The IConfigurationDbContext to use.</typeparam>
@@ -36,8 +47,8 @@ namespace IdentityServer4.EntityFramework.Storage
         /// <param name="storeOptionsAction">The store options action.</param>
         /// <returns></returns>
         public static IServiceCollection AddConfigurationDbContext<TContext>(this IServiceCollection services,
-        Action<ConfigurationStoreOptions> storeOptionsAction = null)
-        where TContext : DbContext, IConfigurationDbContext
+            Action<ConfigurationStoreOptions> storeOptionsAction = null)
+            where TContext : DbContext, IConfigurationDbContext
         {
             var options = new ConfigurationStoreOptions();
             services.AddSingleton(options);
@@ -60,6 +71,37 @@ namespace IdentityServer4.EntityFramework.Storage
         }
 
         /// <summary>
+        /// Add Configuration DbContextPool to the DI system.
+        /// </summary>
+        /// <typeparam name="TContext">The IConfigurationDbContext to use.</typeparam>
+        /// <param name="services"></param>
+        /// <param name="storeOptionsAction">The store options action.</param>
+        /// <returns></returns>
+        public static IServiceCollection AddConfigurationDbContextPool<TContext>(this IServiceCollection services,
+            Action<ConfigurationStoreOptions> storeOptionsAction = null)
+            where TContext : DbContext, IConfigurationDbContext
+        {
+            var options = new ConfigurationStoreOptions();
+            services.AddSingleton(options);
+            storeOptionsAction?.Invoke(options);
+
+            if (options.ResolveDbContextOptions != null)
+            {
+                services.AddDbContextPool<TContext>(options.ResolveDbContextOptions);
+            }
+            else
+            {
+                services.AddDbContextPool<TContext>(dbCtxBuilder =>
+                {
+                    options.ConfigureDbContext?.Invoke(dbCtxBuilder);
+                });
+            }
+            services.AddScoped<IConfigurationDbContext, TContext>();
+
+            return services;
+        }
+
+        /// <summary>
         /// Adds operational DbContext to the DI system.
         /// </summary>
         /// <param name="services"></param>
@@ -69,6 +111,18 @@ namespace IdentityServer4.EntityFramework.Storage
             Action<OperationalStoreOptions> storeOptionsAction = null)
         {
             return services.AddOperationalDbContext<PersistedGrantDbContext>(storeOptionsAction);
+        }
+
+        /// <summary>
+        /// Adds operational DbContextPool to the DI system.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="storeOptionsAction">The store options action.</param>
+        /// <returns></returns>
+        public static IServiceCollection AddOperationalDbContextPool(this IServiceCollection services,
+            Action<OperationalStoreOptions> storeOptionsAction = null)
+        {
+            return services.AddOperationalDbContextPool<PersistedGrantDbContext>(storeOptionsAction);
         }
 
         /// <summary>
@@ -93,6 +147,39 @@ namespace IdentityServer4.EntityFramework.Storage
             else
             {
                 services.AddDbContext<TContext>(dbCtxBuilder =>
+                {
+                    storeOptions.ConfigureDbContext?.Invoke(dbCtxBuilder);
+                });
+            }
+
+            services.AddScoped<IPersistedGrantDbContext, TContext>();
+            services.AddSingleton<TokenCleanup>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// Adds operational DbContextPool to the DI system.
+        /// </summary>
+        /// <typeparam name="TContext">The IPersistedGrantDbContext to use.</typeparam>
+        /// <param name="services"></param>
+        /// <param name="storeOptionsAction">The store options action.</param>
+        /// <returns></returns>
+        public static IServiceCollection AddOperationalDbContextPool<TContext>(this IServiceCollection services,
+            Action<OperationalStoreOptions> storeOptionsAction = null)
+            where TContext : DbContext, IPersistedGrantDbContext
+        {
+            var storeOptions = new OperationalStoreOptions();
+            services.AddSingleton(storeOptions);
+            storeOptionsAction?.Invoke(storeOptions);
+
+            if (storeOptions.ResolveDbContextOptions != null)
+            {
+                services.AddDbContextPool<TContext>(storeOptions.ResolveDbContextOptions);
+            }
+            else
+            {
+                services.AddDbContextPool<TContext>(dbCtxBuilder =>
                 {
                     storeOptions.ConfigureDbContext?.Invoke(dbCtxBuilder);
                 });
