@@ -36,10 +36,15 @@ namespace IdentityServer4.EntityFramework.IntegrationTests.Stores
                 DisplayName = Guid.NewGuid().ToString(),
                 Description = Guid.NewGuid().ToString(),
                 ShowInDiscoveryDocument = true,
-                UserClaims = 
+                UserClaims =
                 {
                     JwtClaimTypes.Subject,
                     JwtClaimTypes.Name,
+                },
+                Properties = new Dictionary<string, string>
+                {
+                    { "key1", "value1"},
+                    { "key2", "value2"}
                 }
             };
         }
@@ -49,7 +54,7 @@ namespace IdentityServer4.EntityFramework.IntegrationTests.Stores
             return new ApiResource()
             {
                 Name = Guid.NewGuid().ToString(),
-                ApiSecrets = new List<Secret> {new Secret("secret".ToSha256())},
+                ApiSecrets = new List<Secret> { new Secret("secret".ToSha256()) },
                 Scopes =
                     new List<Scope>
                     {
@@ -59,7 +64,7 @@ namespace IdentityServer4.EntityFramework.IntegrationTests.Stores
                             UserClaims = {Guid.NewGuid().ToString()}
                         }
                     },
-                UserClaims = 
+                UserClaims =
                 {
                     Guid.NewGuid().ToString(),
                     Guid.NewGuid().ToString(),
@@ -139,11 +144,11 @@ namespace IdentityServer4.EntityFramework.IntegrationTests.Stores
         {
             var visibleIdentityResource = CreateIdentityTestResource();
             var visibleApiResource = CreateApiTestResource();
-            var hiddenIdentityResource = new IdentityResource{Name = Guid.NewGuid().ToString(), ShowInDiscoveryDocument = false};
+            var hiddenIdentityResource = new IdentityResource { Name = Guid.NewGuid().ToString(), ShowInDiscoveryDocument = false };
             var hiddenApiResource = new ApiResource
             {
                 Name = Guid.NewGuid().ToString(),
-                Scopes = new List<Scope> {new Scope {Name = Guid.NewGuid().ToString(), ShowInDiscoveryDocument = false}}
+                Scopes = new List<Scope> { new Scope { Name = Guid.NewGuid().ToString(), ShowInDiscoveryDocument = false } }
             };
 
             using (var context = new ConfigurationDbContext(options, StoreOptions))
@@ -271,7 +276,7 @@ namespace IdentityServer4.EntityFramework.IntegrationTests.Stores
             using (var context = new ConfigurationDbContext(options, StoreOptions))
             {
                 var store = new ResourceStore(context, FakeLogger<ResourceStore>.Create());
-                resources = store.FindApiResourcesByScopeAsync(new List<string> {resource.Scopes.First().Name}).Result.ToList();
+                resources = store.FindApiResourcesByScopeAsync(new List<string> { resource.Scopes.First().Name }).Result.ToList();
             }
 
             Assert.NotEmpty(resources);
@@ -303,12 +308,34 @@ namespace IdentityServer4.EntityFramework.IntegrationTests.Stores
             using (var context = new ConfigurationDbContext(options, StoreOptions))
             {
                 var store = new ResourceStore(context, FakeLogger<ResourceStore>.Create());
-                resources = store.FindApiResourcesByScopeAsync(new List<string> {resource.Scopes.First().Name}).Result.ToList();
+                resources = store.FindApiResourcesByScopeAsync(new List<string> { resource.Scopes.First().Name }).Result.ToList();
             }
 
             Assert.NotNull(resources);
             Assert.NotEmpty(resources);
             Assert.Equal(1, resources.Count);
+        }
+
+        [Theory, MemberData(nameof(TestDatabaseProviders))]
+        public void GetAllResources_WhenIdentityResourceHasProperties_ExpectCollectionPopulated(DbContextOptions<ConfigurationDbContext> options)
+        {
+            var identityResourceWithProperties = CreateIdentityTestResource();
+            using (var context = new ConfigurationDbContext(options, StoreOptions))
+            {
+                context.IdentityResources.Add(identityResourceWithProperties.ToEntity());
+                context.SaveChanges();
+            }
+
+            Resources resources;
+            using (var context = new ConfigurationDbContext(options, StoreOptions))
+            {
+                var store = new ResourceStore(context, FakeLogger<ResourceStore>.Create());
+                resources = store.GetAllResourcesAsync().Result;
+            }
+
+            Assert.NotNull(resources);
+            Assert.NotEmpty(resources.IdentityResources);
+            Assert.Contains(resources.IdentityResources, x => x.Properties.Any());
         }
     }
 }
